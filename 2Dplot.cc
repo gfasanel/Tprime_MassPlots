@@ -28,7 +28,6 @@ void make2Dplot(int cat){
  if(cat==5) file.open("UL_Tprime_observed.txt");
  int i = 0;
 
- //Buono: lo posso dichiarare senza specificare il numero di punti
  TGraph2D* gr= new TGraph2D();
  
  while (!file.eof()) {
@@ -49,9 +48,9 @@ void make2Dplot(int cat){
 
 
 
- //gr->SetMaximum(360);//Questo quando arrivavo fino a Mt=900 GeV
+ //gr->SetMaximum(360);//
  gr->SetMaximum(100);
- //gr->SetMinimum(0.1);//e' in scala log
+ //gr->SetMinimum(0.1);//log scale
  gr->GetXaxis()->SetLimits(500,700);
  //gr->GetXaxis()->SetLimits(500,650);
 
@@ -73,7 +72,7 @@ void make2Dplot(int cat){
 
   TList* list1 = (TList*)gr->GetContourList(1.0);
   list1->First();
-  //Disegno la frontiera di esclusione
+  //I draw the exclusion border
   if(cat==4){
     ifstream file_expected;
     file_expected.open("border_Tprime_expected.txt");
@@ -133,7 +132,7 @@ void make2Dplot(int cat){
   c->SaveAs(("2D_EXCL_PLOT/limit_colz_"+spec+".eps").c_str());
   c->SaveAs(("2D_EXCL_PLOT/limit_colz_"+spec+".C").c_str());
 
-  //Not Rainbow anymmore
+  //Not Rainbow palette anymmore
   /* c->SaveAs(("2D_EXCL_PLOT/limit_colz_rainbow_"+spec+".png").c_str());
   c->SaveAs(("2D_EXCL_PLOT/limit_colz_rainbow_"+spec+".pdf").c_str());
   c->SaveAs(("2D_EXCL_PLOT/limit_colz_rainbow_"+spec+".eps").c_str());

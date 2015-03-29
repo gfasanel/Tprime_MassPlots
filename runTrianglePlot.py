@@ -10,16 +10,11 @@ def banner():
         print '''
         +--------------------------------------------------------------
         |
-        | plot_triangle.py
+    
         |
         |     finds the intersection between the limits.txt and the theoretical
         |     also does multiple files at once with * wildcard, to find triangle
         |     plot
-        |  
-        | usage: 
-        |    ./plot_triangle.py -l 'foldernames_*' -n 'append_name_to_save'
-        |         -h for more help
-        |         where foldernames are multiple files that contain limits.txt
         |
         |   
         | author: Michael Luk, 05 mar 13
@@ -35,7 +30,7 @@ _legend = "[plotTriangle:]"
 #
 ######################
 from optparse import OptionParser
-add_help_option = "./plot_triangle.py -ACTION [other options]"
+add_help_option = "./runTrianglePlot.py -ACTION [other options]"
 
 parser = OptionParser(add_help_option)
 
@@ -77,9 +72,8 @@ print "theoryFileName ", theoryFileName
 
 
 def find_intersection(limits_, theory_):
-	#limits_ puo' essere sia osservato che atteso e lo fa anche a una e 2 sigma
+	#limits_ 
 	intersec=0
-	print "Dentro find_intersec"
         for key in range(600,900,100):
 		if( limits_[key] > 1 and limits_[key -100] < 1):
 			if key == 500:
@@ -96,7 +90,7 @@ def find_intersection(limits_, theory_):
 			b=(limits_[x0]+limits_[x1]-a*(x0+x1))/2
 			intersec=(1-b)/a
 		     		
-	print "Intersezione ",intersec
+	#print "Intersection ",intersec
 	return  intersec
 	
 
@@ -117,7 +111,7 @@ def getColumn(_fileName, nthColumn):
 
 
 def makeBRDict(stepSize = 0.1):
-	#versionCounter = 1 #prima veniva settato a mano solo la prima terna di BRs
+	#versionCounter = 1 #
 	versionCounter = 5
 	#BRr = range(1,11,int(round(10*stepSize)))#
 	BRr = range(6,11,int(round(10*stepSize)))
@@ -147,17 +141,6 @@ def getObsExp(_limitFileName,_theoryFileName):
 	#
 	# mass observed -2sig -1sig median_exp +1sig +2sig
 	# -------------------------------------------
-	500  0.16199  0.066496  0.092811  0.13588  0.20234  0.29836
-	600  0.061975  0.037114  0.050605  0.070805  0.10106  0.1514
-	700  0.055545  0.021078  0.029212  0.040897  0.05892  0.081807
-	800  0.037912  0.014379  0.018497  0.02588  0.03716  0.051418
-	900  0.020186  0.0098627  0.012963  0.018153  0.025971  0.03707
-	1000  0.015139  0.006412  0.0089664  0.012829  0.018184  0.024917
-	1100  0.017633  0.00587  0.0081242  0.01173  0.017775  0.024946
-	1200  0.011271  0.0048906  0.0065896  0.0091507  0.013666  0.018503
-	1300  0.013483  0.0045915  0.0063618  0.0093912  0.013811  0.019741
-	1400  0.0095263  0.0038711  0.0053808  0.0078363  0.011378  0.015583
-	1500  0.011826  0.0034208  0.0047425  0.0069339  0.010048  0.014563
 	"""
 
 	observedDict = getColumn(_limitFileName,2)
@@ -190,7 +173,7 @@ def getObsExp(_limitFileName,_theoryFileName):
 import array
 from ROOT import *
 
-#setMin e setMax settano la scala dell'asse z
+#setMin e setMax for z axis scale
 def makeTrianglePlot(_versions,_limits,z_axis_name,plot_name,two_sigma_up = {}, two_sigma_down = {}, one_sigma_up = {}, one_sigma_down = {}, plotDifference = False, setMin = 500, setMax=620):
 	a = sqrt(3)/ 2
 	gr2d = TGraph2D()
@@ -198,7 +181,7 @@ def makeTrianglePlot(_versions,_limits,z_axis_name,plot_name,two_sigma_up = {}, 
 	Mlow_low  = 9999
 
 	print "Inside makeTriangle"
-	#Be carefull: names of BRs are not meaningfull
+	#Be carefull: names of BRs are not really what they seem
 	counter = -1
 	for key in sorted(_versions.keys()):
 		counter += 1
@@ -340,7 +323,7 @@ def makeTrianglePlot(_versions,_limits,z_axis_name,plot_name,two_sigma_up = {}, 
 
 	gr2d.SetNpx(400);
 	gr2d.SetNpy(400);
-	## A=> i numeri sugli assi non sono mostrati
+	## A=> no numbers on the axis
 	gr2d.Draw("");
 	c1.SetFrameLineColor(0);#in .C works
 	c1.Update();
@@ -371,7 +354,7 @@ def makeTrianglePlot(_versions,_limits,z_axis_name,plot_name,two_sigma_up = {}, 
 	tHAxis1.Draw("S");
 	t.SetTextAlign(22);
 	
-	#questo disegna i contorni del triangolo
+	#Triangle borders
 	axisline = TLine(-0.575, 0, 0.001, 0.9992)
 	axisline . SetLineWidth(3)
 	axisline.Draw("SAME")
@@ -414,7 +397,7 @@ def makeTrianglePlot(_versions,_limits,z_axis_name,plot_name,two_sigma_up = {}, 
 
 	t.DrawLatex(0.835,0.5,z_axis_name+" T Quark Mass Limit (GeV)");
 	
-	#chiede input per continuare
+	#
         #raw_input('press enter to continue...')
         c1.SaveAs('TRIANGLE_PLOTS/'+plot_name+'.pdf')
 	c1.SaveAs('TRIANGLE_PLOTS/'+plot_name+'.png')
