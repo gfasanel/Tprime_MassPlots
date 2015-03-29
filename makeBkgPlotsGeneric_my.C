@@ -137,9 +137,9 @@ void makeBkgPlotsGeneric_my(std::string filebkg, std::string filesig="", bool bl
 		TH1F *tthnorm = (TH1F*)fstth->Get(Form("th1f_sig_tth_mass_m125.6_cat%d",cat));
 		TH1F *Tprimenorm = (TH1F*)fsGiuseppe->Get(Form("th1f_sig_TprimeM700_mass_m125.6_cat%d",cat));
 
-		cout<<endl<<endl<<"Integrale Tprime su tutto il range"<<Tprimenorm->Integral()<<endl;		
-		cout<<"Integrale Tprime mass window"<<Tprimenorm->Integral(Tprimenorm->GetXaxis()->FindBin(123.5),Tprimenorm->GetXaxis()->FindBin(126.5))<<endl;
-		cout<<"Integrale tth mass window"<<tthnorm->Integral(tthnorm->GetXaxis()->FindBin(123.5),tthnorm->GetXaxis()->FindBin(126.5))<<endl;
+		cout<<endl<<endl<<"Tprime Integral all over the range"<<Tprimenorm->Integral()<<endl;		
+		cout<<"Integral Tprime mass window"<<Tprimenorm->Integral(Tprimenorm->GetXaxis()->FindBin(123.5),Tprimenorm->GetXaxis()->FindBin(126.5))<<endl;
+		cout<<"Integral tth mass window"<<tthnorm->Integral(tthnorm->GetXaxis()->FindBin(123.5),tthnorm->GetXaxis()->FindBin(126.5))<<endl;
 
 		/*if (cat<=3){
 		  //totalGGHinINCL+=gghnorm->Integral();
