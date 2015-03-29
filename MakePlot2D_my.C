@@ -1,6 +1,4 @@
-//La macro base per fare le bande si trova in
-//Macros/LIMITS_rereco/new/limit_my.C
-//gira con root -l limit_my.C
+
 #include"TPaveText.h"
 #include "TChain.h"
 #include "TH1F.h"
@@ -70,7 +68,7 @@ TPaveText* get_labelCMS( int legendQuadrant = 0 , std::string year="2012", bool 
   float x1, y1, x2, y2;
   if( legendQuadrant==1 ) {
     x1 = 0.63;
-    y1 = 0.83;
+    y1 = 0.63;
     x2 = 0.8;
     y2 = 0.87;
   } else if( legendQuadrant==2 ) {
@@ -84,10 +82,10 @@ TPaveText* get_labelCMS( int legendQuadrant = 0 , std::string year="2012", bool 
     x2 = 0.42;
     y2 = 0.24;
   } else if( legendQuadrant==0 ) {
-    x1 = 0.175;
-    y1 = 0.953;
-    x2 = 0.6;
-    y2 = 0.975;
+    x1 = 0.125;
+    y1 = 0.903;
+    x2 = 0.4;
+    y2 = 0.925;
   }
 
   
@@ -106,7 +104,7 @@ TPaveText* get_labelCMS( int legendQuadrant = 0 , std::string year="2012", bool 
     if(year == "2011" && run == "RUN2011A")  leftText = "CMS Preliminary RUN2011A 2.034 fb^{-1}";
     if(year == "2011" && run == "RUN2011B")  leftText = "CMS Preliminary 2011, 2.516 fb^{-1}";
     if(year == "2011" && run == "ALL")  leftText = "CMS 4.9 fb^{-1}"; //cwr ->remove 2011
-    if(year == "2012" && run == "ALL")  leftText = "CMS Preliminary #sqrt{s}=8 TeV L=19.7 fb^{-1}";
+    if(year == "2012" && run == "ALL")  leftText = "CMS Preliminary  #sqrt{s}= 8 TeV L=19.7 fb^{-1}";
     if(year == "none" && run == "ALL")  leftText = "CMS Data"; //cwr ->remove 2011
     if(year == "May2011")leftText = "CMS Preliminary 2011, 858.4 pb^{-1}";
 
@@ -197,7 +195,8 @@ void make2D(){
   TGraph* observed_contour= new TGraph();
   observed_contour->SetLineWidth(2);
 
-  observed->SetFillColor(kCMS);//Ciano
+  //observed->SetFillColor(kCMS);//
+  observed->SetFillColor(kBlack);//
   //observed->SetFillColor(kOrange);
   observed->SetLineColor(kBlack);
   observed->SetLineWidth(1);
@@ -260,15 +259,13 @@ void make2D(){
     i++;
   }
 
-  //Ora scambio i punti
-  //Sostanzialmente, tutto questo per fare le bande rispetto all'asse x: serve un grafico che abbia per punti 
-  //il contorno della banda colorata, seguendone il perimetro
+  //Reordering points, because I want to go around the area and have my sigma-bands
   for(int j=0; j<=(sorter_end-sorter)/2;j++){
     graph68->SwapPoints(sorter+j,sorter_end-j);
     graph95->SwapPoints(sorter+j,sorter_end-j);
   }
 
-  //for(int j=0; j<=13;j++){//Per stampare i valori del grafico
+  //for(int j=0; j<=13;j++){//Print values
   //  std::cout<<"x  y"<<graph68->GetX()[j]<<" "<<graph68->GetY()[j]<<endl;
   // }
 
@@ -361,62 +358,65 @@ void make2D(){
   h2->Draw("");
   graph95->Draw("f");
   graph68->Draw("fsame");
-  //expected->Draw("L");//They didn't like it...
+  //expected->Draw("L");//
   expectedWB0->Draw("L");
   expectedtZ0->Draw("L");
   observed->Draw("F");
   observed_contour->Draw("L");
   h2->Draw("AXISSAME");
 
-  TLegend* leg1 = new TLegend(0.4881908,0.2286401,0.8847913,0.4023175,NULL,"brNDC");
+  TLegend* leg1 = new TLegend(0.581908,0.2286401,0.8847913,0.4023175,NULL,"brNDC");
   leg1->SetFillStyle(0); leg1->SetBorderSize(0); 
   leg1->SetFillColor(0);
 
-  TLegend* leg2 = new TLegend(0.4981908,0.4086401,0.8847913,0.5023175,NULL,"brNDC");
+  TLegend* leg2 = new TLegend(0.581908,0.4086401,0.8847913,0.5023175,NULL,"brNDC");
   leg2->SetFillStyle(0); leg2->SetBorderSize(0); 
   leg2->SetFillColor(0);
-  leg2->AddEntry(observed, "Observed Exclusion Region", "F");
+  leg2->AddEntry(observed, "Observed Exclusion", "F");
 
-  TLegend* leg3 = new TLegend(0.4881908,0.1286401,0.8847913,0.223175,NULL,"brNDC");
+  TLegend* leg3 = new TLegend(0.581908,0.1286401,0.8847913,0.223175,NULL,"brNDC");
   leg3->SetFillStyle(0); leg3->SetBorderSize(0); 
   leg3->SetFillColor(0);
 
-  TLegend* leg4 = new TLegend(0.6881908,0.1286401,1.0547913,0.223175,NULL,"brNDC");
+  TLegend* leg4 = new TLegend(0.72,0.1286401,1.02,0.223175,NULL,"brNDC");
   leg4->SetFillStyle(0); leg4->SetBorderSize(0); 
   leg4->SetFillColor(0);
 
     
   label_cms->Draw("same");
-  //label_sqrt->Draw("same");
+  //  label_sqrt->Draw("same");
     
   TH1F h;
   h.SetMarkerSize(0);
   h.SetLineColor(kWhite);
     
 
-  leg1->AddEntry(expectedWB0, "BR(T#rightarrow Wb)=0; BR(T#rightarrow tZ)= 1-BR(T#rightarrow tH)", "l");
+  //  leg1->AddEntry(expectedWB0, "BR(T#rightarrow Wb)=0; BR(T#rightarrow tZ)= 1-BR(T#rightarrow tH)", "l");
+  leg1->AddEntry(expectedWB0, "BR(T#rightarrow Wb) = 0", "l");
   //leg1->AddEntry(expected, "BR(T#rightarrow Wb)=BR(T#rightarrow tZ)= (1-BR(T#rightarrow tH))/2", "l");
-  leg1->AddEntry(expectedtZ0, "BR(T#rightarrow tZ)=0; BR(T#rightarrow Wb)= 1-BR(T#rightarrow tH)", "l");
+  //  leg1->AddEntry(expectedtZ0, "BR(T#rightarrow tZ)=0; BR(T#rightarrow Wb)= 1-BR(T#rightarrow tH)", "l");
+  leg1->AddEntry(expectedtZ0, "BR(T#rightarrow tZ) = 0", "l");
   leg3->AddEntry(graph68, "#pm 1 #sigma", "F");
   leg4->AddEntry(graph95, "#pm 2 #sigma", "F");
-  leg1->SetHeader("Expected Exclusion Region");
+  leg1->SetHeader("Expected Exclusion");
 
   TLegendEntry *textobs = (TLegendEntry*)leg2->GetListOfPrimitives()->At(0);
-  textobs->SetTextSize(0.03);
+  textobs->SetTextSize(0.038);
   TLegendEntry *header = (TLegendEntry*)leg1->GetListOfPrimitives()->First();
-  header->SetTextSize(0.03); 
+  header->SetTextSize(0.038); 
   TLegendEntry *text1 = (TLegendEntry*)leg1->GetListOfPrimitives()->At(1);
-  text1->SetTextSize(0.0245);
+  text1->SetTextSize(0.038);
+  //  text1->SetTextFont(22);
   TLegendEntry *text2 = (TLegendEntry*)leg1->GetListOfPrimitives()->At(2);
-  text2->SetTextSize(0.0245);
+  text2->SetTextSize(0.038);
 
 
 
   TLegendEntry *header3 = (TLegendEntry*)leg3->GetListOfPrimitives()->First();
-  header3->SetTextSize(0.0253); 
+  header3->SetTextSize(0.038); 
 
   TLegendEntry *header4 = (TLegendEntry*)leg4->GetListOfPrimitives()->First();
-  header4->SetTextSize(0.0253); 
+  header4->SetTextSize(0.038); 
 
 
   leg2->Draw("same");
