@@ -36,7 +36,7 @@ import ROOT
 import array,sys,numpy
 ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
 
-ROOT.gROOT.SetBatch(True) #come dire root -b 
+ROOT.gROOT.SetBatch(True) 
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptFit(0)
 ROOT.gStyle.SetPadTickY(0) # I don't want to see ticks on the right side of the plot
@@ -58,10 +58,10 @@ EXPmasses = []
 
 OBSmassesT = [500,600,700,800,900]
 EXPmassesT = [500,600,700,800,900]
-epsilon = 10  # USELESS=> make this smaller than your smallest step size
+epsilon = 10  # make this smaller than your smallest step size
 
-EXP_plot=numpy.arange(500,900,10)#serve per fare le interpolazioni
-OBS_plot=numpy.arange(500,900,10)#serve per fare le interpolazioni
+EXP_plot=numpy.arange(500,900,10)#used for interpolation
+OBS_plot=numpy.arange(500,900,10)#used for interpolation
 
 for m in OBSmassesT:
         #if "%.1f"%m=="%d.0"%(m+epsilon):continue   # sigh!
@@ -76,8 +76,8 @@ FILLSTYLE=1001
 SMFILLSTYLE=3244
 FILLCOLOR_95=ROOT.kYellow
 FILLCOLOR_68=ROOT.kGreen
-RANGEYABS=[0.000005,0.011] #range giusto
-RANGEYRAT=[0.01,30] #era 5.5
+RANGEYABS=[0.000005,0.011] #range
+RANGEYRAT=[0.01,30] 
 RANGEMU = [-4,3.0]
 MINPV = 1.0*10E-8
 MAXPV = 1.0
@@ -172,7 +172,6 @@ if Method=="HybridNew":
     else:
       EXPfiles.append(ROOT.TFile(EXPName+".mH%.1f.quant0.500.root"%m))
     if options.verbose: print "expected MH - ", m, "File - ", EXPfiles[-1].GetName()
-#MIA modifica#  
 elif Method=="Asymptotic" or Method=="AsymptoticNew" or Method=="MaxLikelihoodFit":
   EXPfiles=[]
   EXPmasses = OBSmasses[:]
@@ -181,12 +180,10 @@ elif Method=="Asymptotic" or Method=="AsymptoticNew" or Method=="MaxLikelihoodFi
       print EXPNAME+"%d."+Method+".mH125.6.root"
       EXPfiles.append(ROOT.TFile(EXPName+"%d."+Method+".mH125.6.root"%(m+epsilon)))
       print EXPName+"%d."+Method+".mH125.6.root"%(m+epsilon)
-      print "MIO cout"
     else:
 #      EXPfiles.append(ROOT.TFile(EXPName+".mH%.1f.root"%m))
       EXPfiles.append(ROOT.TFile(EXPName+"%.0f."%m+Method+".mH125.6.root"))
     if options.verbose: print "expected MH - ", m, "File - ", EXPfiles[-1].GetName()
-#MIA modifica#
 else:
   EXPfiles=[]
   for m in EXPmasses:
@@ -198,25 +195,21 @@ else:
 
 # Get the observed limits - Currently only does up to 1 decimal mass points
 OBSfiles = []
-if not options.expectedOnly:#ovvero se non giro con l'opzione -e
+if not options.expectedOnly:
   for m in OBSmasses:
     if "%.1f"%m=="%d.0"%(m+epsilon) and not options.sideband:   # sigh!
       OBSfiles.append(ROOT.TFile(OBSName+"%d."+Method+".mH125.6.root"%(m+epsilon)))
     else:
-      OBSfiles.append(ROOT.TFile(OBSName+"%.0f."%m+Method+".mH125.6.root"))#questa cosa funziona
+      OBSfiles.append(ROOT.TFile(OBSName+"%.0f."%m+Method+".mH125.6.root"))
     if options.verbose: print "observed MH - ", m, "File - ", OBSfiles[-1].GetName()
-#prendere i limiti osservati!
+#get the observed limits
   if Method == "Asymptotic" or Method =="AsymptoticNew" :  obs = [getOBSERVED(O,5) for O in OBSfiles] # observed is last entry in these files
-  #print "OSSERVATO =0"
-  #print obs[0]
   else: obs = [getOBSERVED(O) for O in OBSfiles]
 
 else:
   obs = [0 for O in OBSmasses]
   OBSfiles = obs[:]
 
-#print "OSSERVATO =0"
-#print obs[1]
 # -------------------------------------------------------------------------------------------------------------------------------------------
 # Set-up the GRAPHS
 
@@ -439,9 +432,9 @@ def MakeLimitPlot(MG):
     dummyHist.Draw("AXIS")
     MG.Draw("L3")
     if not options.nogrid: dummyHist.Draw("AXIGSAME")
-#TITOLI SI MODIFICANO QUI
+#Change titles here
     ROOT.gPad.SetLogy()
-    ROOT.gPad.SetLeftMargin(0.15)# lascia spazio a sinistra
+    ROOT.gPad.SetLeftMargin(0.15)# more space in the left side
     dummyHist.GetXaxis().SetTitle("m_{T} (GeV)")
     dummyHist.GetXaxis().SetRangeUser(min(OBSmasses)-OFFSETLOW,max(OBSmasses)+OFFSETHIGH)
 
@@ -472,7 +465,7 @@ def MakeLimitPlot(MG):
     box.SetFillColor(0)
     box.SetShadowColor(0)
 #    if not options.nobox: box.Draw()
-    mytext.DrawLatex(0.2,0.96,"CMS Preliminary #sqrt{s}=8 TeV L=19.7 fb^{-1}")#0.2,0.9
+    mytext.DrawLatex(0.2,0.96,"CMS Preliminary #sqrt{s}=8 TeV L=19.7 fb^{-1}")
     for t,lineT in enumerate(options.addtxt):
         mytext.DrawLatex(0.2,0.84-(t+1)*(0.04),"%s"%lineT)
 
@@ -507,7 +500,7 @@ def MakeLimitPlot(MG):
 #-------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------
-#EXPECTED + Bands => QUI DEVO LAVORARE
+#EXPECTED + Bands
 for i,mass,f in zip(range(len(EXPfiles)),EXPmasses,EXPfiles):
   if options.pval: continue
   sm = 1.
@@ -518,14 +511,10 @@ for i,mass,f in zip(range(len(EXPfiles)),EXPmasses,EXPfiles):
   up95   = array.array('d',[0])
   dn95   = array.array('d',[0])
 
-#sm sta per sezione d'urto teorica. quindi nel mio caso sigma(TT) per tutti i vari BR
-#double Normalization_8TeV::GetXsection(double mass, TString HistName) => mass qui e' quella dell'Higgs, HistName e' il processo
+#sm is the theoretical x-sec. In my case sigma(TT)*BR
+#double Normalization_8TeV::GetXsection(double mass, TString HistName)
 # if not options.doRatio: sm = 2*signalNormalizer.GetBR(125)*signalNormalizer.GetXsection(120,"TprimeM"+"%d"%mass)
   if not options.doRatio: sm = 2*bratio*sigma[i]
-  print ""
-  print "massa GIUSTO"
-  print mass
-  print "SEZIONE URTO"
 #  if not options.doRatio: print 2*signalNormalizer.GetXsection(120,"TprimeM"+"%d"%mass)
   if not options.doRatio: print 2*sigma[i]
   print "sigma*2BR(H->gg)"
@@ -553,10 +542,8 @@ for i,mass,f in zip(range(len(EXPfiles)),EXPmasses,EXPfiles):
   graph68.SetPoint(i,float(mass),median[0]*sm)
   graph95.SetPoint(i,float(mass),median[0]*sm)
   graphMed.SetPoint(i,float(mass),median[0]*sm)
-  graphOne.SetPoint(i,float(mass),1.*sm)#la teoria
-  print "median[0] giusto"
+  graphOne.SetPoint(i,float(mass),1.*sm)
   #print median[0]
-  #cambio mio
   EXPECTED[i]=median[0]
   isExpLeTheory[i]=(median[0]<1.);
   print EXPECTED[i]
@@ -638,40 +625,27 @@ if options.doSmooth:
      fitstringlep2 = "(x>=400)*(x<=450)*([4]+[5]*x)"
  fitstringSigma = "(x<=600)*([0] +[1]*x*x +[2]*x*x*x*x+[3]*x*x*x) + (x>=700)*(exp(-[4]*x*x)) +(x>600)*(x<700)*([5]+[6]*x*x+[7]*x*x*x)"
  fitstringSigma2 = "(x>=550)*(x<=600)*([5]+[6]*x*x+[7]*x*x*x)"
-#Per far funzionare questo bastardo ho fatto 2 fit e poi quando creo il grafico estraggo secondo una funzione di fit o l'altra a seconda del rande di massa
 
-
-# medfunc = ROOT.TF1("medfunc",fitstring,109.,150.);
-# up68func = ROOT.TF1("up68func",fitstring,109.,150.);
-# dn68func = ROOT.TF1("dn68func",fitstring,109.,150.);
-# up95func = ROOT.TF1("up95func",fitstring,109.,150.);
-# dn95func = ROOT.TF1("dn95func",fitstring,109.,150.);
  medfunc = ROOT.TF1("medfunc",fitstring,399.,902.);
  up68func = ROOT.TF1("up68func",fitstring,399.,902.);
  dn68func = ROOT.TF1("dn68func",fitstring,399.,902.);
  up95func = ROOT.TF1("up95func",fitstring,399.,902.);
  dn95func = ROOT.TF1("dn95func",fitstring,399.,902.);
 
-# medfunclep2 = ROOT.TF1("medfunclep2",fitstringlep2,399.,451.);
-# up68funclep2 = ROOT.TF1("up68funclep2",fitstringlep2,399.,451.);
-# dn68funclep2 = ROOT.TF1("dn68funclep2",fitstringlep2,399.,451.);
-# up95funclep2 = ROOT.TF1("up95funclep2",fitstringlep2,399.,451.);
-# dn95funclep2 = ROOT.TF1("dn95funclep2",fitstringlep2,399.,451.);
-
  Sigmafunc = ROOT.TF1("Sigmafunc",fitstringSigma,399.,902);
  Sigmafunc2 = ROOT.TF1("Sigmafunc2",fitstringSigma2,550.,602);
 
- graphmede.Fit(medfunc,"R,M,EX0","Q")#va scommentato
- graph68up.Fit(up68func,"R,M,EX0","Q")#va scommentato
- graph68dn.Fit(dn68func,"R,M,EX0","Q")#va scommentato
- graph95up.Fit(up95func,"R,M,EX0","Q")#va scommentato
- graph95dn.Fit(dn95func,"R,M,EX0","Q")#va scommentato
+ graphmede.Fit(medfunc,"R,M,EX0","Q")
+ graph68up.Fit(up68func,"R,M,EX0","Q")
+ graph68dn.Fit(dn68func,"R,M,EX0","Q")
+ graph95up.Fit(up95func,"R,M,EX0","Q")
+ graph95dn.Fit(dn95func,"R,M,EX0","Q")
 
- graphmede.Fit(medfunclep2,"R,M,EX0","Q")#va scommentato
- graph68up.Fit(up68funclep2,"R,M,EX0","Q")#va scommentato
- graph68dn.Fit(dn68funclep2,"R,M,EX0","Q")#va scommentato
- graph95up.Fit(up95funclep2,"R,M,EX0","Q")#va scommentato
- graph95dn.Fit(dn95funclep2,"R,M,EX0","Q")#va scommentato
+ graphmede.Fit(medfunclep2,"R,M,EX0","Q")
+ graph68up.Fit(up68funclep2,"R,M,EX0","Q")
+ graph68dn.Fit(dn68funclep2,"R,M,EX0","Q")
+ graph95up.Fit(up95funclep2,"R,M,EX0","Q")
+ graph95dn.Fit(dn95funclep2,"R,M,EX0","Q")
 
  graphSigma.Fit(Sigmafunc,"R,M,EX0","Q")
  graphSigma.Fit(Sigmafunc2,"R,M,EX0","Q")
@@ -680,37 +654,20 @@ if options.doSmooth:
  newCanvas = ROOT.TCanvas()
  graphmede.SetMarkerSize(0.8)
  graphmede.SetMarkerStyle(21)
-# graph95up.GetYaxis().SetRangeUser(graph95dn.GetMinimum()-0.2*graph95dn.GetMinimum(),graph95up.GetMaximum()+0.2*graph95up.GetMaximum())
-# graph95up.GetYaxis().SetRangeUser(0.0002,0.005)#Se sistemi i range si riesce a far vedere tutto il grafico!
+
  graph95up.Draw("AP")
- graph68up.Draw("Psame")#senza P non disegna niente il deficiente!
- graphmede.Draw("Psame")#senza P non disegna niente il deficiente!
+ graph68up.Draw("Psame")
+ graphmede.Draw("Psame")
  graph68dn.Draw("Psame")
  graph95dn.Draw("Psame")
  newCanvas.SaveAs("LIMITS_rereco/smoothTest.pdf")
  graphSigma.Draw("AP")
  newCanvas.SaveAs("LIMITS_rereco/Sigma_Test.pdf")
  for i,mass in zip(range(len(EXPmasses)),EXPmasses):
-# for i,mass in zip(range(len(EXP_plot)),EXP_plot):
   sm=1.0
   if not options.doRatio:
 #    sm = 2*signalNormalizer.GetBR(125)*signalNormalizer.GetXsection(120,"TprimeM"+"%d"%mass)
     sm = 2*bratio*sigma[i]
-#    sm =2*signalNormalizer.GetBR(125)*Sigmafunc.Eval(mass)
-    #if(mass>=550)*(mass<=600):
-     #   sm =2*signalNormalizer.GetBR(125)*Sigmafunc2.Eval(mass)
-  #if options.lepcat:
-  #    if (mass<=450)*(mass>=400):
-  #          mediansmooth = medfunclep2.Eval(mass)
-  #          graphMed.SetPoint(i,mass,mediansmooth*sm)
-  #          graph68.SetPoint(i,mass,mediansmooth*sm)
-  #          graph95.SetPoint(i,mass,mediansmooth*sm)
-  #          graphTheo.SetPoint(i,mass,sm)
-  
-  #          diff95_up = abs(mediansmooth - up95funclep2.Eval(mass))*sm
-  #          diff95_dn = abs(mediansmooth - dn95funclep2.Eval(mass))*sm
-  #          diff68_up = abs(mediansmooth - up68funclep2.Eval(mass))*sm
-  #          diff68_dn = abs(mediansmooth - dn68funclep2.Eval(mass))*sm
   
   #else:
   print "******************"
@@ -739,21 +696,7 @@ for i,mass in zip(range(len(OBSfiles)),OBSmasses):
 #    if not options.doRatio: sm = 2*signalNormalizer.GetBR(125)*signalNormalizer.GetXsection(120,"TprimeM"+"%d"%mass)
     if not options.doRatio: sm = 2*bratio*sigma[i]
     graphObs.SetPoint(i,float(mass),obs[i]*sm)
-    print "OSSERVATO"
-    print "massa"
-    print mass
-    print "osservato"
-    print obs[i]
-    #obs[i] e' l'upper limit osservato
-    print "teoria"
-    print sm
-    print "punto di massa"
-    print i
     isObsLeTheory[i]=(obs[i]<1.)
-    print "BR check"
-    print bratio
-    print "Sigma check"
-    print sigma[i]
     graphObs.SetPointError(i,0,0,0,0)
 
 print "*****************"
@@ -777,13 +720,13 @@ if not options.expectedOnly:
     a=0.0
     b=0.0
     x=0.0
-    #se la massa esclusa e' maggiore di 500
+    #If excluded mass > 500
     if(M[0]!=0):
         a=(OBS[0]-OBS[1])/(M[0]-M[1])
         b=(OBS[0]+OBS[1]-a*(M[0]+M[1]))/2
         x=(1-b)/a
         
-    print "(OSSERVATO) Regione esclusa fino a MT"
+    print "(Observed excluded) Region up to MT"
     print x
 
 if options.expectedOnly:
@@ -792,7 +735,7 @@ if options.expectedOnly:
         if (isExpLeTheory[j]==1 and isExpLeTheory[j+1]==0):
             M[0]=OBSmasses[j]
             M[1]=OBSmasses[j+1]
-            #si chiama OBS, ma come vedi e' Expected
+            #it's called obs, but it's expected
             OBS[0]=EXPECTED[j]
             OBS[1]=EXPECTED[j+1]
             #print "OBS[0] ="
@@ -811,7 +754,7 @@ if options.expectedOnly:
         b=(OBS[0]+OBS[1]-a*(M[0]+M[1]))/2
         x=(1-b)/a
         
-    print "(ATTESO) Regione esclusa fino a MT"
+    print "(Expected) excluded region up to MT"
     print x
 
 
@@ -834,7 +777,7 @@ if options.bayes:
  bayesObs.SetMarkerColor(4)
  bayesObs.SetLineStyle(7)
 
-graphOne.SetLineWidth(3) #Era cosi'
+graphOne.SetLineWidth(3)
 graphOne.SetLineColor(ROOT.kRed)
 graphOne.SetMarkerColor(ROOT.kRed)
 
@@ -842,7 +785,7 @@ graphTheo.SetLineWidth(3)
 graphTheo.SetLineColor(ROOT.kRed)
 graphTheo.SetMarkerColor(ROOT.kRed)
 graphObs.SetMarkerStyle(20)
-graphObs.SetMarkerSize(1.0) #era 2.0
+graphObs.SetMarkerSize(1.0)
 graphObs.SetLineColor(1)
 
 graphMed.SetLineStyle(2)
